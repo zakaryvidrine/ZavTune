@@ -16,7 +16,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ZavTune-Windows-VST3
-          path: build/ZavTune_artefacts/Release/VST3/ZavTune.vst3
+          path: build/ZavTune_artefacts/Release/VST3
 
   macos:
     runs-on: macos-latest
@@ -29,4 +29,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ZavTune-macOS-VST3
-          path: build/ZavTune_artefacts/Release/VST3/ZavTune.vst3
+          path: build/ZavTune_artefacts/Release/VST3
