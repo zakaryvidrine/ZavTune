@@ -13,20 +13,19 @@ jobs:
         run: cmake -B build -A x64
       - name: Build
         run: cmake --build build --config Release --target ZavTune_VST3
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          & $iscc installer\ZavTune.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Get-ChildItem dist
       - uses: actions/upload-artifact@v4
         with:
-          name: ZavTune-Windows-VST3
-          path: build/ZavTune_artefacts/Release/VST3
-
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure
-        run: cmake -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-      - name: Build
-        run: cmake --build build --config Release --target ZavTune_VST3
+          name: ZavTune-Installer-Windows
+          path: dist/ZavTune Installer.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: ZavTune-macOS-VST3
+          name: ZavTune-VST3-manual-install
           path: build/ZavTune_artefacts/Release/VST3
