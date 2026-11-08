@@ -12,6 +12,7 @@ An Auto-Tune-style vocal pitch corrector. It finds the pitch of your voice and s
 | **Humanize** | Relaxes correction on long held notes so they keep natural vibrato |
 | **Transpose** | Shifts everything up/down in semitones (±12) |
 | **Mix** | Dry/wet blend |
+| **Low Latency** | Cuts the plugin's delay from ~15 ms to ~5 ms, for singing live through it |
 
 The display shows the target note, the detected frequency, and how many cents it's correcting.
 
@@ -43,13 +44,14 @@ Output: `build\ZavTune_artefacts\Release\VST3\ZavTune.vst3`. Copy it to `C:\Prog
 Tips:
 - Put ZavTune **before** reverb/delay, and after any noise gate or EQ.
 - Feed it a dry, single voice. It's monophonic, so harmonies or a backing track mixed in will confuse it.
-- It adds about 15 ms of latency. FL compensates on playback; for live monitoring, use a small ASIO buffer.
+- **Live monitoring / streaming:** turn on **Low Latency** (~5 ms instead of ~15 ms) and set FL's ASIO buffer as low as your interface handles cleanly (128 samples or less). Total delay you hear = plugin + buffer.
+- Low Latency uses shorter grains, so very deep voices can sound slightly grainier. For mixing a recorded vocal, leave it off. FL compensates either way on playback (if you flip it during playback, stop and restart so FL re-syncs).
 
 ## How it works
 
 - **Detection:** YIN pitch tracking (70–1000 Hz) on a mono sum, every ~5 ms, with a noise gate and note hysteresis so it doesn't flutter between notes.
 - **Correction:** the target note's offset is smoothed by Retune Speed, then scaled by Amount.
-- **Shifting:** a two-grain crossfaded delay-line pitch shifter with cubic interpolation (low CPU, low latency).
+- **Shifting:** a two-grain crossfaded delay-line pitch shifter with cubic interpolation (low CPU, low latency). Normal mode uses 30 ms grains; Low Latency uses 10 ms grains plus twice-as-frequent pitch analysis (every 2.5 ms).
 
 The DSP lives in `Source/ZavTuneDSP.h` with no JUCE dependency, so it's easy to tweak.
 
